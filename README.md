@@ -5,6 +5,8 @@
 
 This is a game project for 2022‘s CSDN 1024 Open Source Challenge.
 
+![](.\imgs\1024game-cover.png)
+
 ## Preview
 
 ![](./imgs/preview.png)
