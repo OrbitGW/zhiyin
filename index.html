@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="--Author" content="orbigw">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body{ margin:0; width:100%; height:100%;}
+        #topbox{
+            background-color: rgb(59, 79, 194);
+            position: relative;
+            width: 800px;
+            height: 100px;
+            left:50%;
+            transform: translateX(-50%);
+            text-align: center;
+            line-height: 80px;
+            color:white;
+            font-weight: 100;
+            border-radius: 16px;
+            font-size: 32px;
+        }
+        #cvs{
+            box-sizing: border-box;
+            position: relative;
+            left:50%;
+            transform: translateX(-50%);
+            border: black solid 4px;
+            border-radius: 16px;
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+    <title>zhiyin - orbitgw</title>
+</head>
+<body>
+    <div id="topbox">CSDN 1024程序员开源挑战赛作品 - ZhiYin(只因)<div style="font-size: 8px;line-height: 20px;">by orbitgw<div></div>
+    <canvas id="cvs" width="800" height="640">
+        Do not Support canvas
+    </canvas>
+    <script type="text/javascript">
+        var cvs = document.getElementById('cvs')
+        var ctx = cvs.getContext('2d')
+
+        var mouse = {x : 0,y:0};
+        var lastx;
+
+        var kun1 = new Image();
+        var kun2 = new Image();
+        var ball = new Image();
+        var bg = new Image();
+
+        kun1.src = 'imgs/kun-1.png';
+        kun2.src = 'imgs/kun-2.png';
+        ball.src = 'imgs/ball.png';
+        bg.src = "imgs/bg.jpg";
+
+        var gameover = false;
+        var init = true;
+
+        var kposx;
+        var bposx;
+        var bposy;
+        var ddx=0;
+        var kef=0;
+        var bup = false;
+        kposx = 360;
+        bposx = 380;
+        bposy = 20;
+        bg.onload = function(){
+            ctx.drawImage(bg,0,0,810,640);
+        }
+
+        var state = {
+            left:true,
+            right:false
+        };
+
+        document.addEventListener("keydown",keydown);
+        function keydown(event){      
+            if (event.keyCode == 65 & kposx >= 0){  
+                kposx -= 20;
+                
+                
+            }
+            if (event.keyCode == 68 & kposx <= 720){  
+                kposx += 20;
+                
+                
+            }
+            if(event.keyCode == 32&&(gameover||init)){
+                init = false;
+                kposx = 360;
+                bposx = 380;
+                bposy = 20;
+                gameover = false;
+                state.left = true;
+                state.right = false; 
+                ddx=0;
+                kef=0;
+            }
+        }
+        var frame = 0;
+        addEventListener("mousemove",function (e) {
+            var x,y;
+            var e = e||window.event;
+            if(e.pageX||e.pageY){
+                x = e.pageX;
+                y = e.pageY;
+            }
+            else {
+                x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;                  
+                y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                
+            }
+            offsetLeft = (document.body.clientWidth - 800)/2;
+            offsetTop = 104;
+            //window.console.log(x+" "+y);
+            x -= offsetLeft;
+            y -= offsetTop;
+            kposx = x;
+            if(x<lastx){
+                state.left = true;
+                state.right =false;
+                kef=-10;
+            }
+            if(x<lastx){
+                state.right = true;
+                state.left = false;
+                kef=10;
+            }
+            if(frame%5==0)
+                lastx=kposx;
+            frame++;
+            window.console.log(lastx+" "+x);
+        },false);
+
+        function draw(){
+            if(!gameover&&!init){
+                ctx.drawImage(bg,0,0,810,640);
+                if(state.left){
+                    ctx.drawImage(kun1,kposx,500,80,80);
+                }
+                if(state.right){
+                    ctx.drawImage(kun2,kposx,500,80,80);
+                }
+                if(bposx<=0||bposx>=760)
+                    ddx=-ddx;
+                bposx+=ddx;
+                if(!bup){
+                    bposy += 5;
+                }else{
+                    bposy -= 5;
+                    if(bposy<0)
+                        bup=false;
+                }
+                if(kef>0)
+                    kef--;
+                if(kef<0)
+                    kef++;
+                if(bposy>=480 && bposy<500 && kposx-25 < bposx && bposx < kposx+75){
+                    bup = true;
+                    ddx = -ddx;
+                    ddx += kef;
+                }
+                if(bposy>=540)
+                {
+                    gameover = true;
+                }
+
+                ctx.drawImage(ball,bposx,bposy,40,40);
+
+                
+            }else{
+                ctx.fillStyle = "black";
+                ctx.font = '72px "Arial"'
+                if(init){
+                    ctx.fillText("ZhiYin", 290, 300);
+                }else{
+                    ctx.fillText("Game Over", 220, 300);
+                }
+
+                ctx.font = '32px "Arial"'
+                ctx.fillText("Press SPACE to start", 240, 350);
+            }
+            ctx.fillStyle = "white";
+            ctx.font = '16px "Arial"'
+            ctx.fillText("Copyright (C) 2022 OrbitGW(Chris Cheng) <15086960386@163.com>", 140, 620);
+        }
+        (function animloop() {
+            draw();
+            window.requestAnimationFrame(animloop);
+        })();
+      </script>
+</body>
+</html>
